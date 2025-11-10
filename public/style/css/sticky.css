@@ -1,0 +1,159 @@
+
+:root {
+  --main-font-family-1: "Montserrat", sans-serif;
+  --main-font-family-other: "Carter One", serif;
+  --arabic-font-family: "Tajawal", sans-serif;
+  --main-transition: 0.3s;
+  --main-transition-2: 0.5s ease-in-out;
+  --background-color: linear-gradient(rgba(255, 255, 255, 0) 0%, rgb(214, 254, 241) 80.16%, rgb(255, 255, 255) 100%);
+  --main-color: #019d91;
+  --main-color-2: #00ddb3;
+  --main-color-3: #F01543;
+  --main-color-4: #9ce17f;
+  --main-color-5: #f8fafc;
+  --hover-color: #00c1a2;
+  --hover-color2: #FE724C;
+  --success-color: #73EC8B;
+  --text-color: #8d8d8d;
+  --border-color: #019d91;
+}
+
+
+
+
+
+
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  font-family: system-ui, sans-serif;
+}
+
+.stickySection {
+  -webkit-app-region: drag;
+  background: rgba(0, 0, 0, .6);
+  color: #fff;
+  padding: 8px;
+  border-radius: 12px;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.stickySection .box_section {
+  width: 100%;
+  height: 100%;
+
+}
+
+.stickySection .box_section  .card {
+  background-color: transparent !important;
+  border: none;
+}
+
+.stickySection .top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stickySection .top .roomName {
+  margin: 0;
+}
+
+.stickySection  .list {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+}
+
+.stickySection  .list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  border-bottom: 2px solid white;
+}
+.stickySection  .list li .info{
+  margin: 0px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.stickySection  .list li .info.free {
+  color: var(--success-color);
+}
+.stickySection  .list li .info.busy {
+  color: var(--main-color-3);
+}
+.stickySection  .list li .info .offline {
+  color: var(--main-color-3);
+  text-transform: capitalize;
+}
+
+.stickySection  .closeStickyBtn {
+  -webkit-app-region: no-drag;
+  cursor: pointer;
+  background-color: #F01543;
+  border: none;
+  border-radius: 6px;
+  padding: 2px 6px;
+  margin: 5px;
+  color: white;
+  transition: 0.3s ease;
+  font-size: 0.75rem;
+}
+
+.stickySection  .closeStickyBtn:hover {
+  background-color: #D90429;
+}
+
+.stickySection  .peer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid white;
+  width: 100%;
+}
+
+.stickySection  .status_employee {
+  font-size: 1.2rem;
+  color: white;
+}
+
+.stickySection  .name_employee {
+  font-size: 1.2rem;
+}
+
+.stickySection  .small {
+  font-size: 1rem;
+  color: white;
+  text-align: center;
+  width: 100%;
+}
+
+.stickySection  .empty {
+  font-weight: bold;
+}
+
+
+
+
+.stickySection .employeeStatusBtn {
+  margin-top: 30px;
+  display: flex;
+  justify-self: center;
+  font-size: 1.3rem;
+  text-transform: capitalize;
+  padding-inline: 20px;
+}
+
+
+
