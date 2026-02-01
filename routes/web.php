@@ -3,11 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\roomsController;
-
-
-
-
-
+use Illuminate\Broadcasting\Broadcasters\Broadcaster;
+use Illuminate\Support\Facades\Broadcast;
 
 Route::middleware('auth')->group(function (){
   Route::get('profile/{role}',[ProfileController::class,"profile"])->name("user.profile");
@@ -22,5 +19,6 @@ Route::middleware('auth')->group(function (){
 
   Route::post('room/sticky/close/{room}',[roomsController::class, "closeSticky"])->name("room.sticky.close");
 
-  
+
 });
+Broadcast::routes();

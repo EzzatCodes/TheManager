@@ -28,7 +28,7 @@
       @endif
       <div class="box_section">
         <header class="header_section">
-          <img src="{{ asset('uploads/logo_PNG_01.png') }}" alt="DHABT Logo" class="logo" />
+          {{-- <img src="#" alt="Logo" class="logo" /> --}}
           <p class="tit" trans="Welcome_Please_enter_your_details">Welcome! Please enter your details.</p>
         </header>
         <form class="Form_login" method="POST" action="{{ route('auth.register') }}">
@@ -57,18 +57,16 @@
           <div class="mb-3 form-group">
             <label for="loginInputPassword" class="form-label" trans="Password"> Password </label>
             <div class="box_input_password">
-              <input type="password" class="form-control" id="loginInputPassword" name="password"
-                placeholder="Password">
-              <i class="fa-solid fa-eye eye_icon" id="togglePassword"></i>
+              <input type="password" class="form-control password-input" name="password" placeholder="Password">
+              <i class="fa-solid fa-eye eye_icon toggle-password"></i>
             </div>
           </div>
 
           <div class="mb-3 form-group">
             <label for="Confirm_Password" class="form-label" trans="Confirm_Password"> Confirm Password </label>
             <div class="box_input_password">
-              <input type="password" class="form-control" id="Confirm_Password" name="password_confirmation"
-                placeholder="Confirm Password">
-              <i class="fa-solid fa-eye eye_icon" id="togglePassword"></i>
+              <input type="password" class="form-control password-input" name="password_confirmation" placeholder="Confirm Password">
+              <i class="fa-solid fa-eye eye_icon toggle-password"></i>
             </div>
           </div>
 
@@ -102,3 +100,29 @@
 
 
 @endsection
+
+
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleButtons = document.querySelectorAll(".toggle-password");
+
+    toggleButtons.forEach(button => {
+      button.addEventListener("click", function () {
+        const input = this.previousElementSibling;
+
+        if (input.type === "password") {
+          input.type = "text";
+          this.classList.remove("fa-eye");
+          this.classList.add("fa-eye-slash");
+        } else {
+          input.type = "password";
+          this.classList.remove("fa-eye-slash");
+          this.classList.add("fa-eye");
+        }
+      });
+    });
+  });
+</script>

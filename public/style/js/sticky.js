@@ -35,9 +35,7 @@ if (viewRoomEmployeeBtn) {
       let activationAlert = document.getElementById("activationAlert");
       if (activationBtn) {
         let user_stats = activationBtn.getAttribute("data-user-status");
-        let profileEmployeeSection = document.getElementById(
-          "profileEmployeeSection"
-        );
+        let profileEmployeeSection = document.getElementById("profileEmployeeSection");
         let backdrop = document.getElementById("backdrop");
         if (user_stats == "offline") {
           profileEmployeeSection.addEventListener("click", function () {
@@ -58,7 +56,16 @@ if (viewRoomEmployeeBtn) {
             employeeStickyWindow.focus(); // رجّع التركيز على النافذة المفتوحة
           }
         }
+
+        activationBtn.addEventListener("click", function () {
+          if (activationBtn.getAttribute("data-user-status") == "online") {
+            if (employeeStickyWindow && !employeeStickyWindow.closed) {
+              employeeStickyWindow.close();
+            }
+          }
+        });
       }
+
     });
   });
 }

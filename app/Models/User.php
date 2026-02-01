@@ -9,60 +9,62 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+  /** @use HasFactory<\Database\Factories\UserFactory> */
+  use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-      'name',
-      'email',
-      'password',
-      'role',
-      'status',
-      'activation',
-      'The_rooms_manager_currently_open',
+  /**
+   * The attributes that are mass assignable.
+   *
+   * @var list<string>
+   */
+  protected $fillable = [
+    'name',
+    'email',
+    'password',
+    'role',
+    'status',
+    'activation',
+    'The_rooms_manager_currently_open',
+  ];
+
+
+  /**
+   * The attributes that should be hidden for serialization.
+   *
+   * @var list<string>
+   */
+  protected $hidden = [
+    'password',
+    'remember_token',
+  ];
+
+  /**
+   * Get the attributes that should be cast.
+   *
+   * @return array<string, string>
+   */
+  protected function casts(): array
+  {
+    return [
+      'email_verified_at' => 'datetime',
+      'password' => 'hashed',
+      'The_rooms_manager_currently_open' => 'array',
     ];
-
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-      return [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'The_rooms_manager_currently_open' => 'array',
-      ];
-    }
+  }
 
 
 
-    // الغرف اللي أنا Manager فيها
-    /* many to one   في الكود ده اقدر اجيب كل الغرف الخاصة بلمدير */
-    public function ManagedRooms() {
-      return $this->hasMany(Room::class, 'owner_id');
-    }
+  // الغرف اللي أنا Manager فيها
+  /* many to one   في الكود ده اقدر اجيب كل الغرف الخاصة بلمدير */
+  public function ManagedRooms()
+  {
+    return $this->hasMany(Room::class, 'owner_id');
+  }
 
-    public function rooms() {
-      return $this->belongsToMany(Room::class, 'room_user');
-    }
-
+  public function rooms()
+  {
+    return $this->belongsToMany(Room::class, 'room_user')
+      ->withPivot('the_employee_room_opened_id') // ⬅ المهم
+      ->withTimestamps();;
+  }
 }
-

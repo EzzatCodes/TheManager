@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use App\Mail\ResetPasswordMail;
+use App\Events\ActivationEvent;
 
 class authController extends Controller
 {
@@ -91,21 +92,38 @@ class authController extends Controller
 
   public function closeApplication()
   {
-    $user = Auth::user();
-    if ($user->role == "employee") {
-      // update the room_user table to set the the_employee_room_opened_id to null
-      /** @var \App\Models\User $user */
-      $user->rooms()->where('user_id', $user->id)->update(['the_employee_room_opened_id' => null]);
-    } elseif ($user->role == "manager") {
-      // update the users table make The_rooms_manager_currently_open = []
-      /** @var \App\Models\User $user */
-      $openedRooms = [];
-      $user->update(['The_rooms_manager_currently_open' => array_values($openedRooms)]);
+    if (! Auth::check()) {
+      abort(403, 'Unauthorized');
     }
+
     /** @var \App\Models\User $user */
+    $user = Auth::user();
+
+    if ($user->role === 'employee') {
+      // قفّل كل الـ sticky للموظف (لو موجودة)
+      foreach ($user->rooms as $room) {
+        $user->rooms()->updateExistingPivot($room->id, [
+          'the_employee_room_opened_id' => null,
+        ]);
+      }
+    } elseif ($user->role === 'manager') {
+      // فضّي الغرف المفتوحة عند المدير
+      $user->update(['The_rooms_manager_currently_open' => []]);
+    }
+
+    // فعلياً قفّل التطبيق (offline)
     $user->update([
       'activation' => 'offline',
     ]);
+
+    // لو Employee ابعت event بـ offline
+    if ($user->role === 'employee') {
+      event(new ActivationEvent(
+        userId: $user->id,
+        activation: $user->activation, // offline
+      ));
+    }
+
     return redirect()->back();
   }
 

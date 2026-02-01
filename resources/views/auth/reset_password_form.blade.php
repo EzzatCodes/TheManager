@@ -27,7 +27,7 @@
       @endif
       <div class="box_section">
         <header class="header_section">
-          <img src="{{ asset('uploads/logo_PNG_01.png') }}" alt="Web Logo" class="logo"/>
+          {{-- <img src="#" alt="Logo" class="logo"/> --}}
         </header>
         <form class="Form_check_password" action="{{ route('password.reset') }}" method="POST">
           @csrf

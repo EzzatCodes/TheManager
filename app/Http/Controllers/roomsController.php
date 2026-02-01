@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Room;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Events\EmployeeJoinRoomEvent;
+use App\Events\DeleteEmployeeFromRoomEvent;
+use App\Events\ChangeEmployeeStatusEvent;
 
 class roomsController extends Controller
 {
@@ -75,9 +78,17 @@ class roomsController extends Controller
         if (! $room->employees()->where('user_id', $user->id)->exists()) {
           $room->employees()->attach($user->id);
         }
+        event(new EmployeeJoinRoomEvent(
+          roomId: $room->id,
+          userId: $user->id,
+          userName: $user->name,
+          status: $user->status,           // free|busy
+          activation: $user->activation,    // online|offline
+          openedRoom: $user->the_employee_room_opened_id,   // the_employee_room_opened_id
+        ));
         return redirect()->back()->with('success', 'Joined Room Successfully');
-      }else{
-        return redirect()->back()->with('error','You must be online first!');
+      } else {
+        return redirect()->back()->with('error', 'You must be online first!');
       }
     }
   }
@@ -93,6 +104,7 @@ class roomsController extends Controller
   public function deleteEmployee(Room $room, User $user)
   {
     $room->employees()->detach($user->id);
+    event(new DeleteEmployeeFromRoomEvent($room->id, $user->id, $user->name));
     return redirect()->back()->with('success', "Employee Deleted Successfully");
   }
 
@@ -106,6 +118,24 @@ class roomsController extends Controller
       /** @var \App\Models\User $user */
       $user->rooms()->where('user_id', $user->id)->update(['the_employee_room_opened_id' => null]);
       $user->rooms()->updateExistingPivot($room->id, ['the_employee_room_opened_id' => $room->id]);
+
+      $newStatus = $user->status;
+
+      // نجيب رقم الغرفة اللي فاتحها الموظف من الـ pivot
+      $pivotRow = $user->rooms()
+        ->whereNotNull('room_user.the_employee_room_opened_id')
+        ->first();
+
+      $openedRoomId = $pivotRow->pivot->the_employee_room_opened_id;
+
+      event(new ChangeEmployeeStatusEvent(
+        roomId: $room->id,
+        userId: $user->id,
+        userName: $user->name,
+        status: $newStatus,
+        activation: $user->activation,
+        openedRoom: $openedRoomId
+      ));
     } elseif ($user->role == "manager") {
       // update the users table to set the The_rooms_manager_currently_open to the current open room id
       /** @var \App\Models\User $user */
@@ -131,6 +161,23 @@ class roomsController extends Controller
       // update the room_user table to set the the_employee_room_opened_id to null
       /** @var \App\Models\User $user */
       $user->rooms()->where('user_id', $user->id)->update(['the_employee_room_opened_id' => null]);
+
+      $newStatus = $user->status;
+      // نجيب رقم الغرفة اللي فاتحها الموظف من الـ pivot
+      $pivotRow = $user->rooms()
+        ->where('room_user.the_employee_room_opened_id')
+        ->first();
+      $openedRoomId = $pivotRow->pivot->the_employee_room_opened_id;
+
+      event(new ChangeEmployeeStatusEvent(
+        roomId: $room->id,
+        userId: $user->id,
+        userName: $user->name,
+        status: $newStatus,
+        activation: $user->activation,
+        openedRoom: $openedRoomId
+      ));
+
     } elseif ($user->role == "manager") {
       // update the users table to remove the current open room id from The_rooms_manager_currently_open
       /** @var \App\Models\User $user */
@@ -149,21 +196,52 @@ class roomsController extends Controller
 
   public function updateEmployee(User $employee)
   {
-    if (Auth::check() && Auth::user() == $employee && $employee->role == "employee") {
-      if ($employee->status == "free") {
-        $employee->update([
-          'status' => 'busy',
-        ]);
-        return redirect()->back();
-      } elseif ($employee->status == "busy") {
-        $employee->update([
-          'status' => 'free',
-        ]);
-        return redirect()->back();
-      } else {
-        abort(404, "not found");
-      }
+    if (! Auth::check() || Auth::id() !== $employee->id || $employee->role !== 'employee') {
+      abort(403, 'Unauthorized');
     }
-    abort(403, "Unauthorized");
+
+    if (! in_array($employee->status, ['free', 'busy'])) {
+      abort(404, 'not found');
+    }
+
+    $newStatus = $employee->status === 'free' ? 'busy' : 'free';
+
+    $employee->status = $newStatus;
+    $employee->save();
+
+    // نجيب رقم الغرفة اللي فاتحها الموظف من الـ pivot
+    $pivotRow = $employee->rooms()
+      ->whereNotNull('room_user.the_employee_room_opened_id')
+      ->first();
+
+    $openedRoomId = $pivotRow->pivot->the_employee_room_opened_id;
+
+
+    // ابعت للمديرين في كل الغرف اللي الموظف عضو فيها
+    foreach ($employee->rooms as $room) {
+      event(new ChangeEmployeeStatusEvent(
+        roomId: $room->id,
+        userId: $employee->id,
+        userName: $employee->name,
+        status: $newStatus,
+        activation: $employee->activation,
+        openedRoom: $openedRoomId
+      ));
+    }
+
+    // 📌 هنا المهم:
+    // ابعت الحدث لكل الغرف اللي الموظف عضو فيها
+    foreach ($employee->rooms as $room) {
+      event(new ChangeEmployeeStatusEvent(
+        roomId: $room->id,                 // قناة الغرفة دي
+        userId: $employee->id,
+        userName: $employee->name,
+        status: $newStatus,
+        activation: $employee->activation,
+        openedRoom: $openedRoomId,        // الغرفة اللي فاتحها فعلاً (ممكن null)
+      ));
+    }
+
+    return redirect()->back();
   }
 }

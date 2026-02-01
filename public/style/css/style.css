@@ -24,6 +24,21 @@ main {
   padding: 0 !important;
 }
 
+
+.eye_icon {
+  cursor: pointer;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.box_input_password {
+  position: relative;
+}
+
+
 /* -------------------------- Start Login Section -------------------------- */
 
 .login_section {

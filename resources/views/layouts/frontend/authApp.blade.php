@@ -34,8 +34,11 @@
   @stack('PageStyleCss')
   <title>@yield('title')</title>
   {{-- favIcon --}}
-  <link rel="shortcut icon" href="{{ asset('uploads/logo_PNG.png') }}">
-  <link rel="icon" href="{{ asset('uploads/logo_PNG.png') }}" type="image/x-icon">
+  <link rel="shortcut icon" href="#">
+  <link rel="icon" href="#" type="image/x-icon">
+
+
+  @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 
 <body>
