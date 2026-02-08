@@ -1,65 +1,122 @@
-<<<<<<< HEAD
-# TheManager
-=======
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# The Manager
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+The Manager is a **desktop-first enterprise management system** designed to manage distributed employees with real-time presence tracking and centralized control.
 
-## About Laravel
+Although the backend is powered by a modern web stack, the system is **not exposed as a public website**.  
+Access is restricted exclusively to a desktop application built with Electron.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Overview
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The Manager was built to solve a common enterprise problem:  
+**How do you manage employees across multiple locations without exposing your system publicly?**
 
-## Learning Laravel
+The solution is a hybrid architecture:
+- A secure Laravel backend hosted on the cloud
+- A controlled Electron desktop client as the only access point
+- Real-time communication for live presence updates
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+From the user’s perspective, this is a **native desktop application**, not a website.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Architecture
 
-## Laravel Sponsors
+- **Backend:** Laravel (PHP)
+- **Frontend:** Blade + Vite
+- **Desktop Client:** Electron (Windows)
+- **Database:** MySQL
+- **Real-Time Engine:** Pusher
+- **Hosting:** Cloud / VPS (Hostinger, DigitalOcean, Hetzner-ready)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+The backend handles business logic and data persistence, while the Electron client provides a secure and controlled interface for employees.
+This separation allows independent scaling, secure access control, and long-term maintainability.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Why Desktop, Not Web?
 
-## Contributing
+This project intentionally avoids being a traditional public website in order to:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Prevent unauthorized browser access
+- Enforce controlled usage through a desktop client only
+- Allow deeper system-level features such as:
+  - Auto-launch and background presence
+  - System tray integration
+  - Native OS controls
+  - Future offline detection
 
-## Code of Conduct
+Even if the backend URL is known, direct browser access is blocked.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## Real-Time Features
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- Live online/offline employee presence
+- Instant updates across all connected clients
+- Centralized real-time state using Pusher
+- Production-ready (no `npm run dev` required on user machines)
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
->>>>>>> 77984d4 (first commit)
+## Security Model
+
+- Backend routes are protected using custom Laravel middleware
+- Requests must include specific desktop headers
+- Browser-based access is rejected
+- Only Electron clients can communicate with the backend
+
+This ensures the system behaves like a **private internal application**, not a public service.
+
+---
+
+## Local Development
+
+### Backend
+
+```bash
+composer install
+php artisan migrate
+php artisan serve
+```
+
+-- Frontend Assets
+- npm install
+- npm run dev
+
+-- Desktop Application
+- npm install
+- npm start
+
+
+-- Production Build (Desktop)
+- npm run build
+- npm run dist
+---
+
+## Use Case
+
+- PhenixManager is suitable for organizations that:
+
+- Manage employees across multiple locations
+
+- Require real-time visibility
+
+- Prefer desktop-controlled access
+
+- Need strong separation between public and internal systems
+
+
+## Status
+
+This project is production-oriented and architected for scalability:
+
+- VPS-ready
+
+- Real-time enabled
+
+- Desktop-only access model
+
+- Clean separation of concerns
+
