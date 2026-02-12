@@ -96,8 +96,7 @@ php artisan serve
 ---
 
 ## Use Case
-
-- PhenixManager is suitable for organizations that:
+**The Manager is suitable for organizations that:**
 
 - Manage employees across multiple locations
 
